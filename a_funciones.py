@@ -435,7 +435,7 @@ def resumen_pivot(df_total):
         
     pivot_df["SumaCols"] = pivot_df.iloc[:, [-2, -4, -6]].mean(axis=1)
 
-    pivot_df["VALOR POR UND ULTIMO PERIODO"] = ((pivot_df.iloc[:, [-4, -6]].mean(axis=1))/(pivot_df.iloc[:, [-3, -5]].mean(axis=1))).round(2)
+    pivot_df["VALOR POR UND ULTIMO PERIODO"] = ((pivot_df.iloc[:, [-3, -5]].mean(axis=1))/(pivot_df.iloc[:, [-2, -4]].mean(axis=1))).round(2)
 
 
     # Asegura que SumaCols sea numérica
