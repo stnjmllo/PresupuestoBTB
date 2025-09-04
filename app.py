@@ -46,10 +46,6 @@ INDEX_HTML = """
   <!-- Logo -->
   <img src="{{ url_for('static', filename='VIVELL MELINA (1).png') }}" alt="Vivell Logo" class="logo-vivell">
   <!-- Crédito solicitado (arriba) -->
-  <div class="credit">
-    Realizado por <strong>Melina Muñoz Marín</strong> — Área de Sistemas ·
-    <a href="mailto:help.desk@vivell.co">help.desk@vivell.co</a>
-  </div>
 
   <!-- Tarjeta principal con botón -->
   <div class="container main-wrap">

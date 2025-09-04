@@ -55,13 +55,13 @@ python app.py
 - Los warnings de `SettingWithCopyWarning` en Pandas son normales en esta versión, no afectan el resultado final.
 
 ##  Autores
+**Juan Sebastian Jaramillo Gomez**  
+Área de Sistemas — Vivell S.A.S  
+ aux.bi1@vivell.co
 **Melina Muñoz Marín**  
 Área de Sistemas — Vivell S.A.S  
  help.desk@vivell.co
 
-**Juan Sebastian Jaramillo Gomez**  
-Área de Sistemas — Vivell S.A.S  
- aux.bi1@vivell.co
 
 ##  Licencia
 Este proyecto es de uso interno para **Vivell S.A.S**.  
