@@ -5,6 +5,8 @@ import sqlite3
 import pandas as pd
 from datetime import datetime, timedelta
 import numpy as np
+import numpy as np
+
 def extraer_datos():
 
     # Consulta SQL utilizando el primer día del año presente
@@ -112,8 +114,8 @@ def extraer_datos():
     return pd.read_sql(query, conn)
 
 def limpiar_espacios(df, columna):
-    df[columna] = df[columna].str.strip()                # elimina espacios al inicio y final
-    df[columna] = df[columna].str.replace(r'\s+', ' ', regex=True)  # reemplaza múltiples espacios por uno solo
+    df[columna] = df[columna].str.strip()                
+    df[columna] = df[columna].str.replace(r'\s+', ' ', regex=True)  
     return df
 
 def limp_trans(df):
@@ -126,7 +128,7 @@ def limp_trans(df):
     Almacenes_clean.loc[Almacenes_clean['TipoCliente'] == 'POS', 'NombreCliente'] = '-'
     filas_antes = len(Almacenes_clean)
 
-    # Estandarizar nombres de vendedores
+    
     Almacenes_clean.replace({
         'JEISON ARRIETA': 'ARRIETA GALVIS JEISSON ARLEY',
         'CINDY MEJIA': 'MEJIA LOBO CINDY DORIS',
@@ -139,7 +141,7 @@ def limp_trans(df):
         'ARCILA CHICA DANIELA\t': 'ARCILA CHICA DANIELA',
     }, inplace=True)
 
-    # Agrupar tiendas Falabella
+    
     Almacenes_clean.replace({
         'FALABELLA DE COLOMBIA S A- GALERIA': 'FALABELLA DE COLOMBIA S A',
         'FALABELLA DE COLOMBIA S A- LA FELICIDAD': 'FALABELLA DE COLOMBIA S A',
@@ -256,13 +258,11 @@ def rank(Almacenes_clean):
     # Fecha de corte: 4 meses atrás
     fecha_corte = hoy - relativedelta(months=3)
 
-    # Año y mes de corte
     año_corte = fecha_corte.year
     mes_corte = fecha_corte.month
-
-    # Filtrar desde año y mes de corte
     df_2025 = df[(df['Año'] > año_corte) |
-                    ((df['Año'] == año_corte) & (df['Mes'] >= mes_corte))].copy()
+                ((df['Año'] == año_corte) & (df['Mes'] >= mes_corte))].copy()
+
 
     # Paso 2: Calcular ventas por cliente en 2025
     ranking = df_2025.groupby(['NombreVendedorDestino', 'RegionBTOB', 'TipoCliente', 'NombreCliente'], as_index=False)['PESOS'].sum()
@@ -407,7 +407,7 @@ def resumen_pivot(df_total):
         values=['PESOS', 'UND'],
         index=['RegionBTOB', 'NombreVendedorDestino', 'TipoCliente', 'NombreCliente'],
         columns=['Año', 'Mes'],
-        aggfunc="mean",
+        aggfunc="sum",
         fill_value=0
     )
 
@@ -433,12 +433,10 @@ def resumen_pivot(df_total):
         # Borramos esas columnas
         pivot_df = pivot_df.drop(columns=cols_a_borrar)
         
-    pivot_df["SumaCols"] = pivot_df.iloc[:, [-2, -4, -6]].sum(axis=1)
+    pivot_df["SumaCols"] = pivot_df.iloc[:, [-2, -4, -6]].mean(axis=1)
 
-    pivot_df["VALOR POR UND ULTIMO PERIODO"] = ((pivot_df.iloc[:, [-4, -6]].sum(axis=1))/(pivot_df.iloc[:, [-3, -5]].sum(axis=1))).round(2)
+    pivot_df["VALOR POR UND ULTIMO PERIODO"] = ((pivot_df.iloc[:, [-4, -6]].mean(axis=1))/(pivot_df.iloc[:, [-3, -5]].mean(axis=1))).round(2)
 
-    import numpy as np
-    import pandas as pd
 
     # Asegura que SumaCols sea numérica
     pivot_df["SumaCols"] = pd.to_numeric(pivot_df["SumaCols"], errors="coerce").fillna(0)
@@ -446,7 +444,7 @@ def resumen_pivot(df_total):
     claves = ["RegionBTOB", "NombreVendedorDestino", "TipoCliente"]
 
     # Total por grupo (sin NombreCliente)
-    pivot_df["TotalGrupo"] = pivot_df.groupby(claves)["SumaCols"].transform("sum")
+    pivot_df["TotalGrupo"] = pivot_df.groupby(claves)["SumaCols"].transform("mean")
 
     # Peso de cada línea: SumaCols / Total del grupo
     pivot_df["PESO DE VENDEDOR POR CLIENTE"] = np.where(
