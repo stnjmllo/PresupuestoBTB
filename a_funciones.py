@@ -433,18 +433,21 @@ def resumen_pivot(df_total):
         # Borramos esas columnas
         pivot_df = pivot_df.drop(columns=cols_a_borrar)
         
-    pivot_df["SumaCols"] = pivot_df.iloc[:, [-2, -4, -6]].mean(axis=1)
+    pivot_df["SumaCols"] = pivot_df.iloc[:, [-2, -4, -6]].sum(axis=1)
 
-    pivot_df["VALOR POR UND ULTIMO PERIODO"] = ((pivot_df.iloc[:, [-3, -5]].mean(axis=1))/(pivot_df.iloc[:, [-2, -4]].mean(axis=1))).round(2)
+    
+    
+
+    pivot_df["VALOR POR UND ULTIMO PERIODO"] = ((pivot_df.iloc[:, [-3, -5]].sum(axis=1))/(pivot_df.iloc[:, [-2, -4]].sum(axis=1))).round(2)
 
 
     # Asegura que SumaCols sea numérica
     pivot_df["SumaCols"] = pd.to_numeric(pivot_df["SumaCols"], errors="coerce").fillna(0)
 
-    claves = ["RegionBTOB", "NombreVendedorDestino", "TipoCliente"]
+    claves = ["NombreVendedorDestino", "TipoCliente"]
 
     # Total por grupo (sin NombreCliente)
-    pivot_df["TotalGrupo"] = pivot_df.groupby(claves)["SumaCols"].transform("mean")
+    pivot_df["TotalGrupo"] = pivot_df.groupby(claves)["SumaCols"].transform("sum")
 
     # Peso de cada línea: SumaCols / Total del grupo
     pivot_df["PESO DE VENDEDOR POR CLIENTE"] = np.where(
